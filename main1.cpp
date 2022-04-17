@@ -48,6 +48,7 @@ void jump()
     }
 }
 
+//checks if previous row in f_staller had a stall at same column 
 void stChecker(int i, int k)
 {
     for (int j = k; j < f_staller[i - 1].size(); j++)
@@ -61,6 +62,7 @@ void stChecker(int i, int k)
     }
 }
 
+//checks if previous row in wf_staller had a stall at same column 
 void wstChecker(int i, int k)
 {
     for (int j = k; j < wf_staller[i - 1].size(); j++)
@@ -74,6 +76,7 @@ void wstChecker(int i, int k)
     }
 }
 
+//creates wf_staller(described as above)
 void with_forwarding(int i)
 {
     int c, ct_stall = 0, ct_stall_max = 0;
@@ -90,7 +93,7 @@ void with_forwarding(int i)
         return;
     }
     wf_steps.clear();
-    while (space--)
+    while (space--)//next line begins with an added space at beginning
     {
         wf_steps.push_back(sp);
     }
@@ -121,14 +124,14 @@ void with_forwarding(int i)
             int k = wf_steps.size() - 1;
             if (checks[i - 1][1] == checks[i][c]) // if last line has the current token as the destination register
             {
-                while (k < wf_staller[i - 1].size() && wf_staller[i - 1][k++] != "EX")
+                while (k < wf_staller[i - 1].size() && wf_staller[i - 1][k++] != "EX")//wait till execution stage(EX)
                 {
                     ct_stall++;
                 }
             }
             else if (i - 2 >= 0 && checks[i - 2][1] == checks[i][c]) // if second last line has the current token as the destination register
             {
-                while (k < wf_staller[i - 2].size() && wf_staller[i - 2][k++] != "EX")
+                while (k < wf_staller[i - 2].size() && wf_staller[i - 2][k++] != "EX")//wait till execution stage(EX)
                 {
                     ct_stall++;
                 }
@@ -143,7 +146,7 @@ void with_forwarding(int i)
 
     wstChecker(i, wf_steps.size());
     wf_steps.push_back("ID");
-    if (checks[i - 1][0] == "lw")
+    if (checks[i - 1][0] == "LW")
     {
         wf_steps.push_back("ST");
     }
@@ -157,6 +160,7 @@ void with_forwarding(int i)
     wf_steps.clear();
 }
 
+//creates f_staller(described as above)
 void without_forwarding(int i)
 {
     int c, ct_stall = 0, ct_stall_max = 0;
@@ -174,7 +178,7 @@ void without_forwarding(int i)
     }
     f_steps.clear();
 
-    while (space--) // push back spaces in f_steps
+    while (space--) //each line begins with an added space at the beginning
     {
         f_steps.push_back(sp);
     }
@@ -207,14 +211,14 @@ void without_forwarding(int i)
             int k = f_steps.size() - 1;
             if (checks[i - 1][1] == checks[i][c]) // if last line has the current token as the destination register
             {
-                while (k < f_staller[i - 1].size() && f_staller[i - 1][k++] != "WB")
+                while (k < f_staller[i - 1].size() && f_staller[i - 1][k++] != "WB")//wait till write back stage(WB) is completed
                 {
                     ct_stall++;
                 }
             }
             else if (i - 2 >= 0 && checks[i - 2][1] == checks[i][c]) // if second last line has the current token as the destination register
             {
-                while (k < f_staller[i - 2].size() && f_staller[i - 2][k++] != "WB")
+                while (k < f_staller[i - 2].size() && f_staller[i - 2][k++] != "WB")//wait till write back stage(WB) is completed
                 {
                     ct_stall++;
                 }
